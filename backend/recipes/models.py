@@ -1,22 +1,38 @@
 from django.db import models
 from django.contrib.auth.models import User
+from foodgram.settings import FIELD_LENGTH
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=60, verbose_name='Название')
+    """Модель ингредиента"""
+
+    name = models.CharField(
+        max_length=FIELD_LENGTH['ING_NAME_LENGTH'],
+        verbose_name='Название',
+    )
     quantity = models.IntegerField(verbose_name='Количество')
     unit_name = models.CharField(
-        max_length=60, verbose_name='Единица измерения'
+        max_length=FIELD_LENGTH['ING_UNIT_NAME_LENGTH'],
+        verbose_name='Единица измерения',
     )
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
 
 class Tag(models.Model):
-    name = models.CharField(max_length=60, verbose_name='Название')
+    """Модель тега"""
+
+    name = models.CharField(
+        max_length=FIELD_LENGTH['TAG_NAME_LENGTH'], verbose_name='Название'
+    )
     hex_code = models.CharField(
-        max_length=7, verbose_name='Цветовой код (hex)'
+        max_length=FIELD_LENGTH['TAG_HEX_CODE_LENGTH'],
+        verbose_name='Цветовой код (hex)',
     )
     slug = models.SlugField(
         unique=True, verbose_name='URL-путь к данному тэгу'
@@ -25,22 +41,14 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-
-class Image(models.Model):
-    image = models.ImageField(
-        upload_to='media/images',
-        blank=True,
-        verbose_name='Изображение',
-        help_text='Загрузите изображение',
-    )
-    alt = models.CharField(
-        max_length=100,
-        verbose_name='Описание',
-        help_text='Добавьте описание изображения для использования в alt-атрибуте',
-    )
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
 
 
 class Recipe(models.Model):
+    """Модель рецепта"""
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -53,17 +61,24 @@ class Recipe(models.Model):
         verbose_name='Название',
         help_text='Добавьте название рецепта',
     )
-    image = models.ForeignKey(
-        Image,
-        on_delete=models.CASCADE,
-    )
+    image = models.ImageField(upload_to='recipes/images')
 
     description = models.TextField(
         verbose_name='Описание рецепта', help_text='Добавьте описание рецепта'
     )
-    ingredients = models.ManyToManyField(Ingredient)
+    ingredients = models.ManyToManyField(Ingredient, through=RecipeIngredient)
     tags = models.ManyToManyField(Tag)
     cooking_time = models.FloatField()
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+
+
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(Recipe)
+    ingredient = models.ForeingKey(Ingredient)
+    quantity = models.PositiveSmallIntegerField()
