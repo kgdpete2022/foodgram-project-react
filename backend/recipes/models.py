@@ -7,12 +7,12 @@ class Ingredient(models.Model):
     """Модель ингредиента"""
 
     name = models.CharField(
-        max_length=FIELD_LENGTH['ING_NAME_LENGTH'],
+        max_length=FIELD_LENGTH['MID_LENGTH'],
         verbose_name='Название',
     )
     quantity = models.IntegerField(verbose_name='Количество')
     unit_name = models.CharField(
-        max_length=FIELD_LENGTH['ING_UNIT_NAME_LENGTH'],
+        max_length=FIELD_LENGTH['MID_LENGTH'],
         verbose_name='Единица измерения',
     )
 
@@ -28,7 +28,7 @@ class Tag(models.Model):
     """Модель тега"""
 
     name = models.CharField(
-        max_length=FIELD_LENGTH['TAG_NAME_LENGTH'], verbose_name='Название'
+        max_length=FIELD_LENGTH['MID_LENGTH'], verbose_name='Название'
     )
     hex_code = models.CharField(
         max_length=FIELD_LENGTH['TAG_HEX_CODE_LENGTH'],
@@ -57,7 +57,7 @@ class Recipe(models.Model):
         help_text='Выберите автора из списка',
     )
     name = models.CharField(
-        max_length=60,
+        max_length=FIELD_LENGTH['RECIPE_NAME_LENGTH'],
         verbose_name='Название',
         help_text='Добавьте название рецепта',
     )
@@ -66,9 +66,11 @@ class Recipe(models.Model):
     description = models.TextField(
         verbose_name='Описание рецепта', help_text='Добавьте описание рецепта'
     )
-    ingredients = models.ManyToManyField(Ingredient, through=RecipeIngredient)
+    ingredients = models.ManyToManyField(
+        Ingredient, through='RecipeIngredient'
+    )
     tags = models.ManyToManyField(Tag)
-    cooking_time = models.FloatField()
+    cooking_time = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return self.name
@@ -79,6 +81,6 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe)
-    ingredient = models.ForeingKey(Ingredient)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()

@@ -108,8 +108,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 FIELD_LENGTH = {
-    'INGREDIENT_NAME_LENGTH': 60,
-    'ING_UNIT_NAME_LENGTH': 60,
-    'TAG_NAME_LENGTH': 60,
+    'MID_LENGTH': 60,
     'TAG_HEX_CODE_LENGTH': 7,
+    'RECIPE_NAME_LENGTH': 150,
 }
