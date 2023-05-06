@@ -110,5 +110,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 FIELD_LENGTH = {
     'MID_LENGTH': 60,
     'TAG_HEX_CODE_LENGTH': 7,
-    'RECIPE_NAME_LENGTH': 150,
+    'LARGE_LENGTH': 150,
 }

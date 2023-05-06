@@ -57,7 +57,7 @@ class Recipe(models.Model):
         help_text='Выберите автора из списка',
     )
     name = models.CharField(
-        max_length=FIELD_LENGTH['RECIPE_NAME_LENGTH'],
+        max_length=FIELD_LENGTH['LARGE_LENGTH'],
         verbose_name='Название',
         help_text='Добавьте название рецепта',
     )
