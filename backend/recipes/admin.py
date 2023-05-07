@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Tag, Ingredient, Recipe
+from .models import Tag, Ingredient, Recipe, RecipeIngredient
+
+
+class IngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    min_num = 1
 
 
 @admin.register(Tag)
@@ -26,3 +31,4 @@ class RecipeAdmin(admin.ModelAdmin):
         "image",
         "cooking_time",
     )
+    inlines = (IngredientInline,)
