@@ -75,33 +75,57 @@ class Recipe(models.Model):
     )
 
     image = models.ImageField(
-        upload_to="recipes/images",
+        upload_to="recipes/images/",
         verbose_name="Изображение",
         help_text="Добавьте фото к рецепту",
     )
 
     description = models.TextField(
-        verbose_name="Описание рецепта", help_text="Добавьте описание рецепта"
+        verbose_name="Описание рецепта",
+        help_text="Добавьте подробное описание рецепта",
     )
 
     ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient", verbose_name="Ингредиенты"
+        Ingredient, through="IngredientQuantity", verbose_name="Ингредиенты"
     )
 
     tags = models.ManyToManyField(Tag, verbose_name="Теги")
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name="Время приготовления"
+        verbose_name="Время приготовления (в минутах)"
+    )
+
+    pub_date = models.DateTimeField(
+        auto_now_add=True, verbose_name="Время публикации"
     )
 
     def __str__(self):
         return self.name
 
     class Meta:
+        ordering = ("-pub_date",)
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
 
 
-class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+class IngredientQuantity(models.Model):
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name="+"
+    )
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(verbose_name="Количество")
+
+
+class Favorites(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, verbose_name="Рецепт"
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_user_recipe"
+            )
+        ]
