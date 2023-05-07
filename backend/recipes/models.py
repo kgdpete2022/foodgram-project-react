@@ -8,33 +8,45 @@ class Ingredient(models.Model):
 
     name = models.CharField(
         max_length=FIELD_LENGTH["MID_LENGTH"],
-        verbose_name="Название",
+        verbose_name="Название ингредиента",
+        unique=True,
+        db_index=True,
     )
-    unit_name = models.CharField(
+    unit = models.CharField(
         max_length=FIELD_LENGTH["MID_LENGTH"],
         verbose_name="Единица измерения",
     )
 
     def __str__(self):
-        return self.name
+        return f"{self.name}, {self.unit}"
 
     class Meta:
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "unit"], name="unique_name_unit"
+            )
+        ]
 
 
 class Tag(models.Model):
     """Модель тега"""
 
     name = models.CharField(
-        max_length=FIELD_LENGTH["MID_LENGTH"], verbose_name="Название"
+        max_length=FIELD_LENGTH["MID_LENGTH"],
+        verbose_name="Название",
+        db_index=True,
     )
     hex_code = models.CharField(
         max_length=FIELD_LENGTH["TAG_HEX_CODE_LENGTH"],
         verbose_name="Цветовой код (hex)",
+        unique=True,
     )
     slug = models.SlugField(
-        unique=True, verbose_name="URL-путь к данному тэгу"
+        max_length=FIELD_LENGTH["MID_LENGTH"],
+        verbose_name="URL-путь к данному тэгу",
+        unique=True,
     )
 
     def __str__(self):
@@ -48,18 +60,20 @@ class Tag(models.Model):
 class Recipe(models.Model):
     """Модель рецепта"""
 
+    name = models.CharField(
+        max_length=FIELD_LENGTH["LARGE_LENGTH"],
+        verbose_name="Название рецепта",
+        help_text="Добавьте название рецепта",
+    )
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="recipes",
-        verbose_name="Автор",
-        help_text="Выберите автора из списка",
+        verbose_name="Автор рецепта",
+        help_text="Выберите автора рецепта из списка",
     )
-    name = models.CharField(
-        max_length=FIELD_LENGTH["LARGE_LENGTH"],
-        verbose_name="Название",
-        help_text="Добавьте название рецепта",
-    )
+
     image = models.ImageField(
         upload_to="recipes/images",
         verbose_name="Изображение",
@@ -69,9 +83,11 @@ class Recipe(models.Model):
     description = models.TextField(
         verbose_name="Описание рецепта", help_text="Добавьте описание рецепта"
     )
+
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient", verbose_name="Ингредиенты"
     )
+
     tags = models.ManyToManyField(Tag, verbose_name="Теги")
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name="Время приготовления"
