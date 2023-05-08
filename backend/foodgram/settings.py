@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "recipes.apps.RecipesConfig",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -113,4 +114,4 @@ FIELD_LENGTH = {
     "CUSTOM_HEX": 7,
 }
 
-AUTH_USER_MODEL = "users.AppUser"
+AUTH_USER_MODEL = "users.User"

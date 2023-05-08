@@ -4,14 +4,12 @@ from django.db.models import UniqueConstraint
 from foodgram.settings import FIELD_LENGTH
 
 
-class AppUser(AbstractUser):
-    USERNAME_FIELD = "email"
+class User(AbstractUser):
     REQUIRED_FIELDS = [
-        "username",
         "password",
-        "email",
         "first_name",
         "last_name",
+        "email",
     ]
 
     username = models.CharField(
@@ -31,13 +29,14 @@ class AppUser(AbstractUser):
     first_name = models.CharField(
         max_length=FIELD_LENGTH["S"],
         verbose_name="Имя",
-        help_text="Укажите Ваше имя")
+        help_text="Укажите Ваше имя",
     )
 
     last_name = models.CharField(
-        max_length=FIELD_LENGTH["S"], verbose_name="Фамилия", help_text="Укажите Вашу фамилию"
+        max_length=FIELD_LENGTH["S"],
+        verbose_name="Фамилия",
+        help_text="Укажите Вашу фамилию",
     )
 
     def __str__(self):
-        return f"Пользователь: {self.first_name}, email: {self.email}"
-    
+        return f"{self.username} ({self.first_name} {self.last_name})"
