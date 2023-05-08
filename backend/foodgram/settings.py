@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 INSTALLED_APPS = [
@@ -107,7 +107,10 @@ STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 FIELD_LENGTH = {
-    "MID_LENGTH": 60,
-    "TAG_HEX_CODE_LENGTH": 7,
-    "LARGE_LENGTH": 150,
+    "S": 30,
+    "M": 60,
+    "L": 150,
+    "CUSTOM_HEX": 7,
 }
+
+AUTH_USER_MODEL = "users.AppUser"

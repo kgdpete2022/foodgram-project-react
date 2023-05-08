@@ -7,13 +7,13 @@ class Ingredient(models.Model):
     """Модель ингредиента"""
 
     name = models.CharField(
-        max_length=FIELD_LENGTH["MID_LENGTH"],
+        max_length=FIELD_LENGTH["M"],
         verbose_name="Название ингредиента",
         unique=True,
         db_index=True,
     )
     unit = models.CharField(
-        max_length=FIELD_LENGTH["MID_LENGTH"],
+        max_length=FIELD_LENGTH["M"],
         verbose_name="Единица измерения",
     )
 
@@ -34,17 +34,17 @@ class Tag(models.Model):
     """Модель тега"""
 
     name = models.CharField(
-        max_length=FIELD_LENGTH["MID_LENGTH"],
+        max_length=FIELD_LENGTH["M"],
         verbose_name="Название",
         db_index=True,
     )
     hex_code = models.CharField(
-        max_length=FIELD_LENGTH["TAG_HEX_CODE_LENGTH"],
+        max_length=FIELD_LENGTH["CUSTOM_HEX"],
         verbose_name="Цветовой код (hex)",
         unique=True,
     )
     slug = models.SlugField(
-        max_length=FIELD_LENGTH["MID_LENGTH"],
+        max_length=FIELD_LENGTH["M"],
         verbose_name="URL-путь к данному тэгу",
         unique=True,
     )
@@ -61,7 +61,7 @@ class Recipe(models.Model):
     """Модель рецепта"""
 
     name = models.CharField(
-        max_length=FIELD_LENGTH["LARGE_LENGTH"],
+        max_length=FIELD_LENGTH["L"],
         verbose_name="Название рецепта",
         help_text="Добавьте название рецепта",
         db_index=True,
