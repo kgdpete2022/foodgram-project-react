@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 from recipes.models import (
     Ingredient,
@@ -11,3 +12,5 @@ from recipes.models import (
 )
 
 from users.models import User, Follow
+
+class UserSerializer(serializers.)
