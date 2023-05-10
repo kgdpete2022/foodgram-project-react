@@ -9,8 +9,8 @@ load_dotenv(os.path.join(BASE_DIR.parent, "infra/.env"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", False)
-if DEBUG:
-    print(".env is connected, DEBUG mode is ON !!!")
+# if DEBUG:
+#     print(".env успешно подключен, включен режим DEBUG!!!")
 
 ALLOWED_HOSTS = ["*"]
 
