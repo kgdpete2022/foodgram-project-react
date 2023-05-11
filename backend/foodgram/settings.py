@@ -117,6 +117,7 @@ FIELD_LENGTH = {
     "S": 30,
     "M": 60,
     "L": 150,
+    "XL": 254,
     "CUSTOM_HEX": 7,
 }
 

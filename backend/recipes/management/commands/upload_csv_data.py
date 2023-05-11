@@ -28,5 +28,8 @@ class Command(BaseCommand):
                     )
                     discarded_ingredients_count += 1
             print(
-                f"Добавление ингредиентов завершено.\n  - ингредиентов добавлено: {uploaded_ingredients_count}\n  - ингредиентов отклонено (как дубликаты или не соответствующие формату): {discarded_ingredients_count}"
+                f"Добавление ингредиентов завершено.\n  - ингредиентов добавлено: "
+                f"{uploaded_ingredients_count}\n  - ингредиентов отклонено "
+                f"(как дубликаты или не соответствующие формату): "
+                f"{discarded_ingredients_count}"
             )
