@@ -23,6 +23,7 @@ class Ingredient(models.Model):
         return f"{self.name}, {self.unit}"
 
     class Meta:
+        ordering = ("name",)
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
         constraints = [

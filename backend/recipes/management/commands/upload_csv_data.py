@@ -17,7 +17,9 @@ class Command(BaseCommand):
             print("Загружаем ингредиенты в базу данных...")
             for row in csv_reader:
                 try:
-                    Ingredient.objects.create(name=row[0], unit=row[1])
+                    Ingredient.objects.create(
+                        name=row[0].lower(), unit=row[1].lower()
+                    )
                     uploaded_ingredients_count += 1
 
                 except Exception:

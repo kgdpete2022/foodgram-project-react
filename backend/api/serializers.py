@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from users.models import Follow
