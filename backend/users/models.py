@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from foodgram.settings import FIELD_LENGTH
 
 
@@ -40,6 +40,11 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"
 
+    class Meta:
+        ordering = ("username",)
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
 
 class Follow(models.Model):
     author = models.ForeignKey(
@@ -64,6 +69,6 @@ class Follow(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["author", "follower"],
-                name="unique_followed_follower",
+                name="unique_author_follower",
             )
         ]

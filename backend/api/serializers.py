@@ -18,16 +18,38 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeIngredient
+        fields = (
+            "recipe",
+            "ingredient",
+            "quantity",
+        )
+
+
 class IngredientSerializer(serializers.ModelSerializer):
+    quantity = RecipeIngredientSerializer(read_only=True)
+
     class Meta:
         model = Ingredient
         fields = (
             "name",
             "unit",
+            "quantity",
         )
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = "__all__"
+
+
 class RecipesSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+    ingredients = IngredientSerializer(many=True, read_only=True)
+
     class Meta:
         model = Recipe
         fields = (
@@ -40,30 +62,13 @@ class RecipesSerializer(serializers.ModelSerializer):
         )
 
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = (
-            "name",
-            "hex_code",
-            "slug",
-        )
-
-
 class FollowSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+    follower = UserSerializer(read_only=True)
+
     class Meta:
         model = Follow
         fields = (
             "author",
             "follower",
-        )
-
-
-class RecipeIngredientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RecipeIngredient
-        fields = (
-            "recipe",
-            "ingredient",
-            "quantity",
         )

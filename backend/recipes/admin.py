@@ -10,8 +10,8 @@ class IngredientInline(admin.TabularInline):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("name", "hex_code")
-    list_editable = ("hex_code",)
+    list_display = ("name", "color")
+    list_editable = ("color",)
     search_fields = ("name",)
 
 
@@ -22,6 +22,8 @@ class IngredientAdmin(admin.ModelAdmin):
         "unit_name",
         "quantity",
     )
+
+    search_fields = ("name",)
 
 
 @admin.register(Recipe)
