@@ -1,16 +1,17 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.shortcuts import render
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
-from users.models import Follow
 from rest_framework import viewsets
-from .serializers import (
-    UserSerializer,
-    IngredientSerializer,
-    TagSerializer,
-    RecipesSerializer,
-    FollowSerializer,
-)
+from users.models import Follow
 
+from .serializers import (
+    FollowSerializer,
+    IngredientSerializer,
+    RecipeIngredientSerializer,
+    RecipesSerializer,
+    TagSerializer,
+    UserSerializer,
+)
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class IgredientViewSet(viewsets.ModelViewSet):
+class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 
@@ -33,3 +34,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+
+
+class RecipeIngredientsViewSet(viewsets.ModelViewSet):
+    queryset = RecipeIngredient.objects.all()
+    serializer_class = RecipeIngredientSerializer
