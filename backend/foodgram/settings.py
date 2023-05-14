@@ -122,3 +122,15 @@ FIELD_LENGTH = {
 }
 
 AUTH_USER_MODEL = "users.User"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "10000/day",  # Лимит для UserRateThrottle
+        "anon": "1000/day",  # Лимит для AnonRateThrottle
+    },
+}
