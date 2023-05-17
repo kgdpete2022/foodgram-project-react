@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     "recipes.apps.RecipesConfig",
     "users.apps.UsersConfig",
     "rest_framework",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -126,12 +128,24 @@ AUTH_USER_MODEL = "users.User"
 
 
 REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.UserRateThrottle",
         "rest_framework.throttling.AnonRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "user": "10000/day",  # Лимит для UserRateThrottle
-        "anon": "1000/day",  # Лимит для AnonRateThrottle
+        "user": "10000/day",
+        "anon": "1000/day",
     },
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }

@@ -33,8 +33,15 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     """Модель тега"""
 
+    CHOICES = (
+        ("breakfast", "завтрак"),
+        ("lunch", "обед"),
+        ("dinner", "ужин"),
+    )
+
     name = models.CharField(
         max_length=settings.FIELD_LENGTH["M"],
+        choices=CHOICES,
         verbose_name="Название",
         db_index=True,
     )
@@ -81,7 +88,7 @@ class Recipe(models.Model):
         help_text="Добавьте фото к рецепту",
     )
 
-    description = models.TextField(
+    text = models.TextField(
         verbose_name="Описание рецепта",
         help_text="Добавьте подробное описание рецепта",
     )

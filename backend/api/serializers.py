@@ -56,7 +56,7 @@ class RecipesSerializer(serializers.ModelSerializer):
             "name",
             "author",
             "image",
-            "description",
+            "text",
             "ingredients",
             "tags",
         )
