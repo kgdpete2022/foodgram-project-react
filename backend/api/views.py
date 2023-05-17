@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 from users.models import Follow
 
 from .serializers import (
@@ -29,6 +30,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipesSerializer
+    pagination_class = PageNumberPagination
 
 
 class TagViewSet(viewsets.ModelViewSet):

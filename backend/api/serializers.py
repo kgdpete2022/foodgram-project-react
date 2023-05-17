@@ -52,14 +52,7 @@ class RecipesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = (
-            "name",
-            "author",
-            "image",
-            "text",
-            "ingredients",
-            "tags",
-        )
+        fields = "__all__"
 
 
 class FollowSerializer(serializers.ModelSerializer):
