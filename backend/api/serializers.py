@@ -9,7 +9,9 @@ from users.models import Follow
 User = get_user_model()
 
 
-class UserSerializer(UserSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор пользователя"""
+
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -25,10 +27,12 @@ class UserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, other_user):
-        request = self.context.get("request")
-        if request.user.is_anonymous:
+        """Проверяет подписку текущего пользователя /
+        на другого пользователя (other_user)"""
+        current_user = self.context.get("request").user
+        if other_user == current_user or current_user.is_anonymous:
             return False
-        return obj.
+        return other_user.followed_by.filter(user=current_user).exists()
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):

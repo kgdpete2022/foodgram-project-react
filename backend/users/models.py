@@ -4,13 +4,6 @@ from foodgram.settings import FIELD_LENGTH
 
 
 class User(AbstractUser):
-    REQUIRED_FIELDS = [
-        "password",
-        "first_name",
-        "last_name",
-        "email",
-    ]
-
     username = models.CharField(
         max_length=FIELD_LENGTH["S"],
         unique=True,
@@ -50,13 +43,13 @@ class Follow(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="followed_by",
+        related_name="following",
         verbose_name="Автор рецептов",
     )
     follower = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following",
+        related_name="followed_by",
         verbose_name="Фолловер",
     )
 
