@@ -9,7 +9,7 @@ from users.models import Follow
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(UserSerializer):
     """Сериализатор пользователя"""
 
     is_subscribed = serializers.SerializerMethodField(read_only=True)
@@ -33,6 +33,18 @@ class UserSerializer(serializers.ModelSerializer):
         if other_user == current_user or current_user.is_anonymous:
             return False
         return other_user.followed_by.filter(user=current_user).exists()
+
+
+class UserCreateSerializer(UserCreateSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+        )
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
