@@ -9,7 +9,7 @@ from .serializers import (
     FollowSerializer,
     IngredientSerializer,
     RecipeIngredientSerializer,
-    RecipesSerializer,
+    RecipeSerializer,
     TagSerializer,
     UserSerializer,
 )
@@ -29,7 +29,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipesSerializer
+    serializer_class = RecipeSerializer
     pagination_class = PageNumberPagination
 
 
