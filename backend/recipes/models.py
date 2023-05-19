@@ -102,9 +102,9 @@ class Recipe(models.Model):
         verbose_name="Время приготовления (в минутах)"
     )
 
-    # pub_date = models.DateTimeField(
-    #     auto_now_add=True, verbose_name="Время публикации"
-    # )
+    pub_date = models.DateTimeField(
+        auto_now_add=True, verbose_name="Время публикации"
+    )
 
     def __str__(self):
         return self.name
@@ -127,7 +127,7 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Ингредиент",
     )
-    quantity = models.PositiveSmallIntegerField(verbose_name="Количество")
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
 
     class Meta:
         constraints = [
