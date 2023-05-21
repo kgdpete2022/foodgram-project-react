@@ -4,7 +4,14 @@ from django.contrib.auth import get_user_model
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+from recipes.models import (
+    Favorites,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag,
+)
 from rest_framework import serializers
 from users.models import Follow
 
@@ -210,7 +217,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 
 class BriefRecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор вывода рецепта с сокращенным набором полей (для подписок пользователей)."""
+    """Сериализатор вывода рецепта с сокращенным набором полей /
+    (для подписок, избранного и списка покупок)."""
 
     class Meta:
         model = Recipe
@@ -245,3 +253,26 @@ class SubscribtionsSerializer(CustomUserSerializer):
     def get_recipes_count(self, user):
         """Возвращает общее количество рецептов пользователя."""
         return user.recipes.count()
+
+
+class FavoritesSerializer(serializers.ModelSerializer):
+    """Сериализатор рецептов, добавленных в избранное"""
+
+    class Meta:
+        model = Favorites
+        fields = (
+            "user",
+            "recipe",
+        )
+
+    def validate(self, data):
+        user = data["user"]
+        recipe = data["recipe"]
+        if user.favorite_recipes.filter(recipe=recipe).exists():
+            raise serializers.ValidationError(
+                f"Рецепт {recipe} уже добавлен в избранное пользователя {user}."
+            )
+        return data
+
+    def to_representation(self, instance):
+        return BriefRecipeSerializer(instance.recipe).data
