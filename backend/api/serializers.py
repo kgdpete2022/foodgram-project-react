@@ -1,17 +1,9 @@
-import base64
-
 from django.contrib.auth import get_user_model
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.views import UserViewSet
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (
-    Favorites,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingList,
-    Tag,
-)
+from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from rest_framework import serializers
 from users.models import Follow
 
@@ -253,49 +245,3 @@ class SubscribtionsSerializer(CustomUserSerializer):
     def get_recipes_count(self, user):
         """Возвращает общее количество рецептов пользователя."""
         return user.recipes.count()
-
-
-class FavoritesSerializer(serializers.ModelSerializer):
-    """Сериализатор рецептов, добавленных в избранное"""
-
-    class Meta:
-        model = Favorites
-        fields = (
-            "user",
-            "recipe",
-        )
-
-    def validate(self, data):
-        user = data["user"]
-        recipe = data["recipe"]
-        if user.favorite_recipes.filter(recipe=recipe).exists():
-            raise serializers.ValidationError(
-                f"Рецепт {recipe} уже добавлен"
-                / f"в избранное пользователя {user}."
-            )
-        return data
-
-    def to_representation(self, instance):
-        return BriefRecipeSerializer(instance.recipe).data
-
-
-class ShoppingListSerializer(serializers.ModelField):
-    """Сериализатор списка покупок."""
-
-    class Meta:
-        model = ShoppingList
-        fields = (
-            "user",
-            "recipe",
-        )
-
-    def validate(self, data):
-        user = data["user"]
-        recipe = data["recipe"]
-
-        if user.shopping_list.filter(recipe=recipe).exists():
-            raise serializers.ValidationError(
-                f"Рецепт {recipe} уже добавлен"
-                / f"в список покупок пользователя {user}."
-            )
-        return data

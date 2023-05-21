@@ -13,5 +13,3 @@
     ],
     "isort.args":["--profile", "black"],
 }
-
-
