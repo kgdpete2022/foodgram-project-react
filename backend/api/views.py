@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models.import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from recipes.models import (
@@ -99,6 +100,32 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user.id,
             recipe=get_object_or_404(Recipe, id=pk),
         ).delete()
+
+    @action(
+        detail=False, methods=["get"], permission_classes=[IsAuthenticated]
+    )
+    def download_shopping_cart(request):
+        current_user = request.user
+        ingredient_list = f"Cписок покупок пользователя {current_user}:\n"
+        ingredients = (
+            RecipeIngredient.objects.filter(
+                recipe__added_to_shopping_list__user=current_user
+            )
+            .values("ingredient__name", "ingredient__measurement_unit")
+            .annotate(amount=Sum("amount"))
+        )
+        for num, ing in enumerate(ingredients):
+            ingredient_list += (
+                f"{num + 1}. {ing['ingredient__name']} - {ing['amount']}"
+                / f"{ing['ingredient__measurement_unit']}\n"
+            )
+
+        filename = f"shopping-list_{request.user},pdf"
+        response = HttpResponse(
+            ingredient_list, "Content-Type: application/pdf"
+        )
+        response["Content-Disposition"] = f"attachment; filename='{filename}'"
+        return response
 
 
 class TagViewSet(viewsets.ModelViewSet):
