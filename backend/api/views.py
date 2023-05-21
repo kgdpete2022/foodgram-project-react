@@ -1,14 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from users.models import Follow
 
 from .serializers import (
-    FollowSerializer,
     IngredientSerializer,
-    RecipeIngredientSerializer,
     RecipeSerializer,
     TagSerializer,
     UserSerializer,
@@ -36,13 +33,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-
-
-class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
-
-
-class RecipeIngredientsViewSet(viewsets.ModelViewSet):
-    queryset = RecipeIngredient.objects.all()
-    serializer_class = RecipeIngredientSerializer
