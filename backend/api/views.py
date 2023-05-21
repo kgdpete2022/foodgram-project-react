@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from recipes.models import (
+    Favorites,
     Ingredient,
     Recipe,
     RecipeIngredient,
@@ -19,6 +20,7 @@ from rest_framework.response import Response
 from .pagination import ViewLevelPagination
 from .permissions import isAuthor
 from .serializers import (
+    FavoritesSerializer,
     IngredientSerializer,
     RecipeCreateSerializer,
     RecipeGetSerializer,
@@ -70,6 +72,30 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def destroy_shopping_cart(self, request, pk):
         get_object_or_404(
             ShoppingList,
+            user=request.user.id,
+            recipe=get_object_or_404(Recipe, id=pk),
+        ).delete()
+
+    @action(
+        detail=True,
+        methods=("POST",),
+        permission_classes=[IsAuthenticated],
+    )
+    def favorite(self, request, pk):
+        recipe = get_object_or_404(Recipe, id=pk)
+        data = {"user": request.user.id, "recipe": recipe.id}
+        serializer = FavoritesSerializer(
+            data=data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @shopping_cart.mapping.delete
+    def destroy_favorite(self, request, pk):
+        get_object_or_404(
+            Favorites,
             user=request.user.id,
             recipe=get_object_or_404(Recipe, id=pk),
         ).delete()
