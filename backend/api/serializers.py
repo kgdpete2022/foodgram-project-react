@@ -270,9 +270,32 @@ class FavoritesSerializer(serializers.ModelSerializer):
         recipe = data["recipe"]
         if user.favorite_recipes.filter(recipe=recipe).exists():
             raise serializers.ValidationError(
-                f"Рецепт {recipe} уже добавлен в избранное пользователя {user}."
+                f"Рецепт {recipe} уже добавлен"
+                / f"в избранное пользователя {user}."
             )
         return data
 
     def to_representation(self, instance):
         return BriefRecipeSerializer(instance.recipe).data
+
+
+class ShoppingListSerializer(serializers.ModelField):
+    """Сериализатор списка покупок."""
+
+    class Meta:
+        model = ShoppingList
+        fields = (
+            "user",
+            "recipe",
+        )
+
+    def validate(self, data):
+        user = data["user"]
+        recipe = data["recipe"]
+
+        if user.shopping_list.filter(recipe=recipe).exists():
+            raise serializers.ValidationError(
+                f"Рецепт {recipe} уже добавлен"
+                / f"в список покупок пользователя {user}."
+            )
+        return data
