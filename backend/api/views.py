@@ -107,7 +107,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(request):
         current_user = request.user
-        ingredient_list = f"Cписок покупок пользователя {current_user}:\n"
+        shopping_list = f"Cписок покупок пользователя {current_user}:\n"
         ingredients = (
             RecipeIngredient.objects.filter(
                 recipe__added_to_shopping_list__user=current_user
@@ -116,14 +116,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .annotate(amount=Sum("amount"))
         )
         for num, ing in enumerate(ingredients):
-            ingredient_list += (
+            shopping_list += (
                 f"{num + 1}. {ing['ingredient__name']} - {ing['amount']}"
                 / f"{ing['ingredient__measurement_unit']}\n"
             )
 
-        filename = f"shopping-list_{request.user},pdf"
+        filename = f"shopping-list_{request.user}.txt"
         response = HttpResponse(
-            ingredient_list, "Content-Type: application/pdf"
+            shopping_list, content_type="text/plain; charset=utf-8"
         )
         response["Content-Disposition"] = f"attachment; filename='{filename}'"
         return response
