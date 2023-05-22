@@ -4,12 +4,14 @@
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
-        }, 
+        },
     },
     "python.formatting.provider": "none",
     "python.formatting.blackArgs": [
-        "--line-length",
-        "79"
+        "--line-length=79"
     ],
-    "isort.args":["--profile", "black"],
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
 }
