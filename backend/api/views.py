@@ -21,11 +21,9 @@ from rest_framework.response import Response
 from .pagination import ViewLevelPagination
 from .permissions import isAuthor
 from .serializers import (
-    FavoritesSerializer,
     IngredientSerializer,
     RecipeCreateSerializer,
     RecipeGetSerializer,
-    ShoppingListSerializer,
     TagSerializer,
     UserSerializer,
     BriefRecipeSerializer,
