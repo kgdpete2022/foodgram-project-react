@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from recipes.models import (
     Favorites,
-    Follow,
     Ingredient,
     Recipe,
     RecipeIngredient,
@@ -19,6 +18,7 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
+from users.models import Follow
 
 from .pagination import ViewLevelPagination
 from .permissions import isAuthor
@@ -68,7 +68,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user, recipe__id=pk
         ).exists():
             return Response(
-                {"errors": "Рецепт уже есть списке покупок!"},
+                {"errors": "Рецепт уже есть списке покупок"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         recipe = get_object_or_404(Recipe, id=pk)
@@ -79,10 +79,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @shopping_cart.mapping.delete
     def destroy_shopping_cart(self, request, pk):
         if not Recipe.objects.filter(id=pk).exists():
-            return Response({"errors": "Такого рецепта нет в базе!"})
+            return Response({"errors": "Такого рецепта нет в базе"})
         obj = ShoppingList.objects.filter(user=request.user, recipe__id=pk)
         if not obj.exists():
-            return Response({"errors": "Этого рецепта нет в списке покупок!"})
+            return Response({"errors": "Этого рецепта нет в списке покупок"})
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -105,10 +105,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @favorite.mapping.delete
     def destroy_favorite(self, request, pk):
         if not Recipe.objects.filter(id=pk).exists():
-            return Response({"errors": "Такого рецепта нет в базе!"})
+            return Response({"errors": "Такого рецепта нет в базе"})
         obj = Favorites.objects.filter(user=request.user, recipe__id=pk)
         if not obj.exists():
-            return Response({"errors": "Этого рецепта нет в избранном!"})
+            return Response({"errors": "Этого рецепта нет в избранном"})
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -177,7 +177,7 @@ class UserViewSet(UserViewSet):
                 subscription.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(
-                {"errors": "Пользователь не подписан на данного автора!"}
+                {"errors": "Пользователь не подписан на данного автора"}
             )
 
     @action(detail=False, permission_classes=[IsAuthenticated])

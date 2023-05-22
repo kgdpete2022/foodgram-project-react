@@ -1,5 +1,6 @@
-import csv, os
-from pathlib import Path
+import csv
+import os
+
 from django.core.management.base import BaseCommand
 from foodgram.settings import BASE_DIR
 from recipes.models import Ingredient
@@ -18,13 +19,13 @@ class Command(BaseCommand):
             for row in csv_reader:
                 try:
                     Ingredient.objects.create(
-                        name=row[0].lower(), unit=row[1].lower()
+                        name=row[0].lower(), measurement_unit=row[1].lower()
                     )
                     uploaded_ingredients_count += 1
 
                 except Exception:
                     print(
-                        f"Ингредиент '{row[0]}' уже есть в базе данных или не соответствует формату"
+                        f"Ингредиент '{row[0]}' уже есть в базе данных или  не соответствует формату."
                     )
                     discarded_ingredients_count += 1
             print(

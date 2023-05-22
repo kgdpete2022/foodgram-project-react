@@ -54,7 +54,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = "__all__"
+        fields = (
+            "name",
+            "measurement_unit",
+        )
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -151,7 +154,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for tag in tags:
             if not Tag.objects.filter(id=tag.id).exists():
                 raise serializers.ValidationError(
-                    "Указанного тега нет в базе данных!"
+                    "Указанного тега нет в базе данных"
                 )
         return tags
 
@@ -159,15 +162,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         validated_ingredients = []
         if not ingredients_to_validate:
             raise serializers.ValidationError(
-                "В рецепте должен быть как минимум 1 ингредиент!"
+                "В рецепте должен быть как минимум 1 ингредиент"
             )
         for ingredient in ingredients_to_validate:
             if ingredient["id"] in validated_ingredients:
-                raise serializers.ValidationError("Такой ингредиент уже есть!")
+                raise serializers.ValidationError("Такой ингредиент уже есть")
             validated_ingredients.append(ingredient["id"])
             if int(ingredient.get("amount")) < 1:
                 raise serializers.ValidationError(
-                    "Неверно указано количество ингредиента!"
+                    "Неверно указано количество ингредиента"
                 )
         return validated_ingredients
 
@@ -250,11 +253,11 @@ class FollowSerializer(UserSerializer):
         user = self.context.get("request").user
         if author.followed_by.filter(id=user.id).exists():
             raise serializers.ValidationError(
-                detail=f"Пользователь{user} уже подписан на автора {author}!",
+                detail=f"Пользователь{user} уже подписан на автора {author}",
             )
         if user == author:
             raise serializers.ValidationError(
-                detail="Пользователь не может подписаться на самого себя!",
+                detail="Пользователь не может подписаться на самого себя",
             )
         return data
 

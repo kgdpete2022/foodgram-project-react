@@ -17,7 +17,7 @@ class Ingredient(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name}, {self.unit}"
+        return f"{self.name}, {self.measurement_unit}"
 
     class Meta:
         ordering = ("name",)
@@ -25,7 +25,8 @@ class Ingredient(models.Model):
         verbose_name_plural = "Ингредиенты"
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "unit"], name="unique_name_unit"
+                fields=["name", "measurement_unit"],
+                name="unique_name_measurement_unit",
             )
         ]
 
