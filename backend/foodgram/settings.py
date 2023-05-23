@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", default=False)
 # if DEBUG:
-#     print(".env успешно подключен, включен режим DEBUG!!! test")
+#     print(".env успешно подключен, включен режим DEBUG!!!")
 
 ALLOWED_HOSTS = ["*"]
 
