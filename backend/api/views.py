@@ -115,7 +115,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=False, methods=["get"], permission_classes=[IsAuthenticated]
     )
-    def download_shopping_cart(request):
+    def download_shopping_cart(self, request):
         current_user = request.user
         shopping_list = f"Cписок покупок пользователя {current_user}:\n"
         ingredients = (
