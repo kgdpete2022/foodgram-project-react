@@ -3,8 +3,9 @@ from django.db.models import F
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from rest_framework import serializers
+
+from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 
 User = get_user_model()
 
@@ -95,10 +96,9 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, recipe):
         """Возвращает список ингредиентов рецепта."""
-        ingredients = recipe.ingredients.values(
+        return recipe.ingredients.values(
             "id", "name", "measurement_unit", amount=F("recipe__amount")
         )
-        return ingredients
 
     def get_is_favorited(self, recipe):
         """Проверяет, добавлен ли рецепт в избранное текущего пользователя."""

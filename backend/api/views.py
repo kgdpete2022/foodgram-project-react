@@ -3,35 +3,21 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from recipes.models import (
-    Favorites,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingList,
-    Tag,
-)
+
+from recipes.models import (Favorites, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingList, Tag)
 from users.models import Follow
 
 from .pagination import ViewLevelPagination
-from .permissions import isAuthor
-from .serializers import (
-    BriefRecipeSerializer,
-    FollowSerializer,
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeGetSerializer,
-    TagSerializer,
-    UserSerializer,
-)
+from .permissions import IsAuthor
+from .serializers import (BriefRecipeSerializer, FollowSerializer,
+                          IngredientSerializer, RecipeCreateSerializer,
+                          RecipeGetSerializer, TagSerializer, UserSerializer)
 
 User = get_user_model()
 
@@ -52,7 +38,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     pagination_class = ViewLevelPagination
-    permission_classes = (isAuthor,)
+    permission_classes = (IsAuthor,)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -180,6 +166,7 @@ class UserViewSet(UserViewSet):
             return Response(
                 {"errors": "Пользователь не подписан на данного автора"}
             )
+        return None
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
