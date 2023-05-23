@@ -22,8 +22,8 @@ jobs:
       run: |
         python -m flake8 backend        
   
-  build_and_push_frontend_to_docker_hub:
-      name: Push Docker image of frontend to Docker Hub
+  build_and_push_images_to_docker_hub:
+      name: Push Docker images (frontend and backend) to Docker Hub
       runs-on: ubuntu-latest
       needs: tests
       steps:
@@ -36,7 +36,7 @@ jobs:
           with:
             username: ${{ secrets.DOCKER_USERNAME }} 
             password: ${{ secrets.DOCKER_PASSWORD }}
-        - name: Push to Docker Hub
+        - name: Push frontend to Docker Hub
           uses: docker/build-push-action@v2 
           with:
             context: ./frontend
@@ -44,22 +44,7 @@ jobs:
             push: true
             tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
-
-  build_and_push_backend_to_docker_hub:
-      name: Push Docker image of backend to Docker Hub
-      runs-on: ubuntu-latest
-      needs: build_and_push_frontend_to_docker_hub
-      steps:
-        - name: Check out the repo
-          uses: actions/checkout@v2 
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v1 
-        - name: Login to Docker 
-          uses: docker/login-action@v1
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }} 
-            password: ${{ secrets.DOCKER_PASSWORD }}
-        - name: Push to Docker Hub
+        - name: Push backend to Docker Hub
           uses: docker/build-push-action@v2 
           with:
             context: ./backend
@@ -70,7 +55,7 @@ jobs:
 
   deploy:
       runs-on: ubuntu-latest
-      needs: build_and_push_backend_to_docker_hub
+      needs: build_and_push_images_to_docker_hub
       steps:
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -80,6 +65,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            cd infra
+            sudo docker-compose down
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
             sudo docker-compose stop
