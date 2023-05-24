@@ -14,9 +14,10 @@ from users.models import Follow
 
 from .pagination import ViewLevelPagination
 from .permissions import IsAuthor
-from .serializers import (BriefRecipeSerializer, FollowSerializer,
-                          IngredientSerializer, RecipeCreateSerializer,
-                          RecipeGetSerializer, TagSerializer, CustomUserSerializer)
+from .serializers import (BriefRecipeSerializer, CustomUserSerializer,
+                          FollowSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeGetSerializer,
+                          TagSerializer)
 
 User = get_user_model()
 
