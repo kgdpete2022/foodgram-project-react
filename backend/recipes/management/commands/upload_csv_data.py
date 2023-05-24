@@ -26,13 +26,13 @@ class Command(BaseCommand):
                 except Exception:
                     print(
                         f"Ингредиент '{row[0]}' уже есть в базе данных"
-                        / "или не соответствует формату."
+                        f"или не соответствует формату."
                     )
                     discarded_ingredients_count += 1
             print(
-                "Добавление ингредиентов завершено.\n"
-                / "- ингредиентов добавлено: "
-                f"{uploaded_ingredients_count}\n  - ингредиентов отклонено "
+                f"Добавление ингредиентов завершено.\n"
+                f"- ингредиентов добавлено: {uploaded_ingredients_count}\n"
+                f"- ингредиентов отклонено "
                 f"(как дубликаты или не соответствующие формату): "
                 f"{discarded_ingredients_count}"
             )

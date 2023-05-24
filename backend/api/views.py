@@ -16,7 +16,7 @@ from .pagination import ViewLevelPagination
 from .permissions import IsAuthor
 from .serializers import (BriefRecipeSerializer, FollowSerializer,
                           IngredientSerializer, RecipeCreateSerializer,
-                          RecipeGetSerializer, TagSerializer, UserSerializer)
+                          RecipeGetSerializer, TagSerializer, CustomUserSerializer)
 
 User = get_user_model()
 
@@ -132,7 +132,7 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(UserViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
     pagination_class = ViewLevelPagination
 
     @action(

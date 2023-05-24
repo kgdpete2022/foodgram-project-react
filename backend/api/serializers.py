@@ -9,7 +9,7 @@ from rest_framework import serializers
 User = get_user_model()
 
 
-class UserSerializer(UserSerializer):
+class CustomUserSerializer(UserSerializer):
     """Сериализатор отображения пользователя."""
 
     is_subscribed = serializers.SerializerMethodField(read_only=True)
@@ -71,7 +71,7 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeGetSerializer(serializers.ModelSerializer):
     """Сериализатор вывода рецептов."""
 
-    author = UserSerializer(read_only=True)
+    author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     ingredients = serializers.SerializerMethodField()
@@ -133,7 +133,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         error_messages={"does_not_exist": "Указанного тега нет в базе данных"},
     )
     image = Base64ImageField(max_length=None)
-    author = UserSerializer(read_only=True)
+    author = CustomUserSerializer(read_only=True)
     cooking_time = serializers.IntegerField()
 
     class Meta:
@@ -223,7 +223,7 @@ class BriefRecipeSerializer(serializers.ModelSerializer):
         )
 
 
-class FollowSerializer(UserSerializer):
+class FollowSerializer(CustomUserSerializer):
     """Сериализатор вывода подписок текущего пользователя."""
 
     recipes = serializers.SerializerMethodField()
