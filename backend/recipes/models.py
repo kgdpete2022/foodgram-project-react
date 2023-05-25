@@ -95,10 +95,16 @@ class Recipe(models.Model):
     )
 
     ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient", verbose_name="Ингредиенты"
+        Ingredient, 
+        through="RecipeIngredient", 
+        verbose_name="Ингредиенты",
     )
 
-    tags = models.ManyToManyField(Tag, verbose_name="Теги")
+    tags = models.ManyToManyField(
+        Tag, 
+        through="RecipeTag", 
+        verbose_name="Теги"
+    )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name="Время приготовления (в минутах)"
     )
@@ -117,6 +123,7 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    """Модель связи рецептов и ингредиентов"""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -138,8 +145,30 @@ class RecipeIngredient(models.Model):
             )
         ]
 
+class RecipeTag(models.Model):
+    """Модель связи рецептов и тегов"""
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name="+",
+        verbose_name="Рецепт",
+         )
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE,
+        verbose_name="Тег",
+    )
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["recipe", "tag"],
+                name="unique_recipe_tag",
+            )
+        ]
 
 class Favorites(models.Model):
+    """Модель связи пользователей и избранных рецептов"""
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -159,12 +188,14 @@ class Favorites(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_user_recipe_favorites"
+                fields=["user", "recipe"],
+                name="unique_user_favorite_recipes",
             )
         ]
 
 
 class ShoppingList(models.Model):
+    """Модель связи пользователей и списка покупок"""
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

@@ -30,7 +30,6 @@ class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [IsAdminOrReadOnly,]
-    )
     filter_backends = [IngredientFilter, ]
     search_fields = ['^name', ]
 
@@ -52,7 +51,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["post"],
-        permission_classes=[IsAuthenticated. ],
+        permission_classes=[IsAuthenticated, ],
     )
     def shopping_cart(self, request, pk):
         if ShoppingList.objects.filter(
