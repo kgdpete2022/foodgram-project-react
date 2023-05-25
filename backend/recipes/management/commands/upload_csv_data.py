@@ -8,8 +8,7 @@ from recipes.models import Ingredient
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        with open(
-            os.path.join(BASE_DIR.parent / "data/ingredients.csv"),
+        with open("/data/ingredients.csv",
             encoding="utf-8",
         ) as csv_file:
             csv_reader = csv.reader(csv_file)
