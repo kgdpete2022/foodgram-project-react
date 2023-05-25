@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -31,6 +30,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework.authtoken',
     "djoser",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -136,20 +136,23 @@ REST_FRAMEWORK = {
         "user": "10000/day",
         "anon": "1000/day",
     },
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'],
+
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",  # noqa: E501
     "PAGE_SIZE": 6,
 }
 
 DJOSER = {
     "HIDE_USERS": False,
+    'LOGIN_FIELD': 'email',
     "SERIALIZERS": {
         "user": "api.serializers.CustomUserSerializer",
         "user_create": "api.serializers.CustomUserCreateSerializer",
         "current_user": "api.serializers.CustomUserSerializer",
     },
     "PERMISSIONS": {
-        "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
-        "user_list": ["rest_framework.permissions.AllowAny"],
-    },
-    
+        'user': ('rest_framework.permissions.IsAuthenticated',),
+        'user_list': ('rest_framework.permissions.AllowAny',)
+    },    
 }

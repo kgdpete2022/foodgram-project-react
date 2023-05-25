@@ -3,21 +3,23 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from recipes.models import (Favorites, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingList, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
+from .filters import IngredientFilter, RecipeFilter
 from rest_framework.response import Response
-from users.models import Follow
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .pagination import ViewLevelPagination
-from .permissions import IsAuthor
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (BriefRecipeSerializer, CustomUserSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeGetSerializer,
                           TagSerializer)
+from recipes.models import (Favorites, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingList, Tag)
+from users.models import Follow
 
 User = get_user_model()
 
@@ -27,10 +29,10 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (
-        IsAuthenticated,
-        IsAuthenticatedOrReadOnly,
+    permission_classes = [IsAdminOrReadOnly,]
     )
+    filter_backends = [IngredientFilter, ]
+    search_fields = ['^name', ]
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -38,7 +40,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     pagination_class = ViewLevelPagination
-    permission_classes = (IsAuthor,)
+    permission_classes = [IsOwnerOrReadOnly,]
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -48,7 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["post"],
-        permission_classes=[IsAuthenticated],
+        permission_classes=[IsAuthenticated. ],
     )
     def shopping_cart(self, request, pk):
         if ShoppingList.objects.filter(
@@ -129,6 +133,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class UserViewSet(UserViewSet):
@@ -144,6 +149,12 @@ class UserViewSet(UserViewSet):
     def subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, pk=id)
+
+        if user == author:
+            return Response(
+                {"errors": "Нельзя подписаться на самого себя"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if request.method == "POST":
             serializer = FollowSerializer(
@@ -171,7 +182,7 @@ class UserViewSet(UserViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        queryset = User.objects.filter(following__user=user)
+        queryset = User.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
         serializer = FollowSerializer(
             pages, many=True, context={"request": request}

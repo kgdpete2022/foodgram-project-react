@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from .validators import validate_username
+
 from foodgram.settings import FIELD_LENGTH
 
 
@@ -9,6 +11,7 @@ class User(AbstractUser):
         unique=True,
         verbose_name="Логин",
         help_text="Введите логин",
+        validators=[validate_username],
     )
 
     email = models.EmailField(
