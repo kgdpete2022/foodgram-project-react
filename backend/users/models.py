@@ -21,16 +21,23 @@ class User(AbstractUser):
     )
 
     first_name = models.CharField(
-        max_length=30,
+        max_length=60,
         verbose_name="Имя",
-        help_text="Укажите имя",
+        help_text="Укажите Ваше имя",
     )
 
     last_name = models.CharField(
-        max_length=30,
+        max_length=60,
         verbose_name="Фамилия",
-        help_text="Укажите фамилию",
+        help_text="Укажите Вашу фамилию",
     )
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = [
+        "username",
+        "first_name",
+        "last_name",
+    ]
 
     def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"

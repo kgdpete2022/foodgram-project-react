@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -9,7 +10,7 @@ load_dotenv(os.path.join(BASE_DIR.parent, "infra/.env"))
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -21,7 +22,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "django_filters",
+    "api.apps.ApiConfig",
     "users.apps.UsersConfig",
+    "recipes.apps.RecipesConfig",
 ]
 
 MIDDLEWARE = [
@@ -62,6 +68,21 @@ DATABASES = {
     }
 }
 
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": os.getenv(
+#             "DB_ENGINE", default="django.db.backends.postgresql"
+#         ),
+#         "NAME": os.getenv("DB_NAME", default="postgres"),
+#         "USER": os.getenv("POSTGRES_USER", default="postgres"),
+#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+#         "HOST": os.getenv("DB_HOST", default="db"),
+#         "PORT": os.getenv("DB_PORT", default="5432"),
+#     }
+# }
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -98,3 +119,43 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "10000/day",
+        "anon": "1000/day",
+    },
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ],
+}
+
+
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+# }
+
+# DJOSER = {
+#     "HIDE_USERS": False,
+#     "LOGIN_FIELD": "email",
+#     "SERIALIZERS": {
+#         "user": "api.serializers.UserSerializer",
+#         "user_create": "api.serializers.UserCreateSerializer",
+#         "current_user": "api.serializers.UserSerializer",
+#     },
+#     "PERMISSIONS": {
+#         "user": ("rest_framework.permissions.IsAuthenticated",),
+#         "user_list": ("rest_framework.permissions.AllowAny",),
+#     },
+# }

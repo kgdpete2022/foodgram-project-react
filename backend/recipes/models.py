@@ -98,7 +98,6 @@ class Recipe(models.Model):
 
     ingredients = models.ManyToManyField(
         Ingredient,
-        on_delete=models.CASCADE,
         related_name="recipes",
         through="RecipeIngredient",
         verbose_name="Ингредиенты",
@@ -106,7 +105,6 @@ class Recipe(models.Model):
 
     tags = models.ManyToManyField(
         Tag,
-        on_delete=models.DO_NOTHING,
         related_name="recipes",
         through="RecipeTag",
         verbose_name="Теги",
