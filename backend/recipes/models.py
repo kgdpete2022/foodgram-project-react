@@ -36,15 +36,8 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     """Модель тега"""
 
-    CHOICES = (
-        ("breakfast", "завтрак"),
-        ("lunch", "обед"),
-        ("dinner", "ужин"),
-    )
-
     name = models.CharField(
         max_length=60,
-        choices=CHOICES,
         verbose_name="Название",
         db_index=True,
     )

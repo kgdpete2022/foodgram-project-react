@@ -120,9 +120,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
 
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
@@ -146,16 +147,17 @@ REST_FRAMEWORK = {
 #     "AUTH_HEADER_TYPES": ("Bearer",),
 # }
 
-# DJOSER = {
-#     "HIDE_USERS": False,
-#     "LOGIN_FIELD": "email",
-#     "SERIALIZERS": {
-#         "user": "api.serializers.UserSerializer",
-#         "user_create": "api.serializers.UserCreateSerializer",
-#         "current_user": "api.serializers.UserSerializer",
-#     },
-#     "PERMISSIONS": {
-#         "user": ("rest_framework.permissions.IsAuthenticated",),
-#         "user_list": ("rest_framework.permissions.AllowAny",),
-#     },
-# }
+
+DJOSER = {
+    "HIDE_USERS": False,
+    "LOGIN_FIELD": "email",
+    "SERIALIZERS": {
+        "user": "api.serializers.UserSerializer",
+        "user_create": "api.serializers.UserCreateSerializer",
+        "current_user": "api.serializers.UserSerializer",
+    },
+    "PERMISSIONS": {
+        "user": ("rest_framework.permissions.IsAuthenticated",),
+        "user_list": ("rest_framework.permissions.AllowAny",),
+    },
+}

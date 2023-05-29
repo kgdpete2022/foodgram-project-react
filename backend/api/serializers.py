@@ -66,6 +66,14 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# class RecipeIngredientSerialzier(serializers.ModelField):
+#     ingredient = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = RecipeIngredient
+#         fields = ("ingredient")
+
+
 class RecipeGetSerializer(serializers.ModelSerializer):
     """Сериализатор вывода рецептов."""
 
@@ -94,7 +102,9 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     def get_ingredients(self, recipe):
         """Возвращает список ингредиентов рецепта."""
         return recipe.ingredients.values(
-            "id", "name", "measurement_unit", amount=F("recipe__amount")
+            "id",
+            "name",
+            "measurement_unit",
         )
 
     def get_is_favorited(self, recipe):

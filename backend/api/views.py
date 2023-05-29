@@ -13,7 +13,10 @@ from recipes.models import (
 )
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 
 # from .filters import IngredientFilter, RecipeFilter
 from rest_framework.response import Response
@@ -46,7 +49,6 @@ class UserViewSet(UserViewSet):
     @action(
         detail=True,
         methods=["post", "delete"],
-        permission_classes=[IsAuthenticated],
     )
     def subscribe(self, request, id):
         user = request.user
@@ -117,9 +119,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     # pagination_class = ViewLevelPagination
-    permission_classes = [
-        IsOwnerOrReadOnly,
-    ]
+    # #permission_classes = [
+    #     IsOwnerOrReadOnly,
+    # ]
     # filter_backends = [DjangoFilterBackend, ]
     # filterset_class = RecipeFilter
 

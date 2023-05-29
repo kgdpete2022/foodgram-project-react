@@ -1,10 +1,15 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, RecipeIngredient, Tag
+from .models import Ingredient, Recipe, RecipeIngredient, Tag, RecipeTag
 
 
 class IngredientInline(admin.TabularInline):
     model = RecipeIngredient
+    min_num = 1
+
+
+class TagInline(admin.TabularInline):
+    model = RecipeTag
     min_num = 1
 
 
@@ -34,4 +39,7 @@ class RecipeAdmin(admin.ModelAdmin):
         "image",
         "cooking_time",
     )
-    inlines = (IngredientInline,)
+    inlines = (
+        IngredientInline,
+        TagInline,
+    )
