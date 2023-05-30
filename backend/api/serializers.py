@@ -27,10 +27,12 @@ class UserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, other_user):
-        current_user = self.context.get("request").user
+        current_user = self.context["request"].user
         if current_user.is_anonymous or other_user == current_user:
             return False
-        return current_user.subscriptions.filter(author=other_user).exists()
+        return Subscription.objects.filter(
+            subscriber=current_user, author=other_user
+        ).exists()
 
 
 class UserCreateSerializer(UserCreateSerializer):
@@ -106,7 +108,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe):
         """Проверяет, добавлен ли рецепт в избранное текущего пользователя."""
-        current_user = self.context.get("request").user
+        current_user = self.context["request"].user
         if current_user.is_anonymous:
             return False
         return current_user.favorite_recipes.filter(recipe=recipe).exists()
@@ -114,7 +116,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, recipe):
         """Проверяет, добавлен ли рецепт /
         в список покупок текущего пользователя."""
-        current_user = self.context.get("request").user
+        current_user = self.context["request"].user
         if current_user.is_anonymous:
             return False
         return current_user.shopping_list.filter(recipe=recipe).exists()
@@ -198,7 +200,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
 
     def create(self, validated_data):
-        author = self.context.get("request").user
+        author = self.context["request"].user
         tags = validated_data.pop("tags")
         ingredients = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(author=author, **validated_data)
@@ -234,43 +236,54 @@ class BriefRecipeSerializer(serializers.ModelSerializer):
         )
 
 
-class SubscriptionSerializer(UserSerializer):
-    """Сериализатор вывода подписок текущего пользователя."""
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализатор подписок."""
 
+    is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
-    class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + (
-            "recipes_count",
-            "recipes",
-        )
-        read_only_fields = (
+    class Meta:
+        model = User
+        fields = (
             "email",
+            "id",
             "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+            "recipes",
+            "recipes_count",
         )
 
-    def validate(self, data):
-        """Проверяет правильность данных перед подпиской на автора."""
-        author_id = (
-            self.context.get("request").parser_context.get("kwargs").get("id")
-        )
-        author = get_object_or_404(User, id=author_id)
-        user = self.context.get("request").user
-        if author.subscribers.filter(id=user.id).exists():
-            raise serializers.ValidationError(
-                detail=f"Пользователь{user} уже подписан на автора {author}",
-            )
-        if user == author:
-            raise serializers.ValidationError(
-                detail="Пользователь не может подписаться на самого себя",
-            )
-        return data
+    # def validate(self, data):
+    #     """Проверяет правильность данных перед подпиской на автора."""
+    #     author_id = (
+    #         self.context.get("request").parser_context.get("kwargs").get("id")
+    #     )
+    #     author = get_object_or_404(User, id=author_id)
+    #     user = self.context["request"].user
+    #     if author.subscribers.filter(id=user.id).exists():
+    #         raise serializers.ValidationError(
+    #             detail=f"Пользователь{user} уже подписан на автора {author}",
+    #         )
+    #     if user == author:
+    #         raise serializers.ValidationError(
+    #             detail="Пользователь не может подписаться на самого себя",
+    #         )
+    #     return data
+
+    def get_is_subscribed(self, other_user):
+        current_user = self.context["request"].user
+        if current_user.is_anonymous or other_user == current_user:
+            return False
+        return Subscription.objects.filter(
+            subscriber=current_user, author=other_user
+        ).exists()
 
     def get_recipes(self, author):
         """Возвращает рецепты автора в подписках пользователя."""
-        request = self.context.get("request")
-        limit = request.GET.get("recipes_limit")
+        limit = self.context.get("request").GET.get("recipes_limit")
         recipes = author.recipes.all()
         if limit:
             recipes = recipes[: int(limit)]

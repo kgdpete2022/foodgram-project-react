@@ -51,39 +51,35 @@ class UserViewSet(UserViewSet):
         methods=["post", "delete"],
     )
     def subscribe(self, request, id):
-        user = request.user
-        author = get_object_or_404(User, pk=id)
-
-        if user == author:
-            return Response(
-                {"errors": "Нельзя подписаться на самого себя"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
+        user = self.request.user
+        author = get_object_or_404(User, id=id)
+        subscription = Subscription.objects.filter(
+            subscriber=user, author=author
+        )
+        if user.is_anonymous:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         if request.method == "POST":
-            serializer = SubscriptionSerializer(
-                author, data=request.data, context={"request": request}
-            )
-            if serializer.is_valid():
-                Subscription.objects.create(subscriber=user, author=author)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if request.method == "DELETE":
-            subscription = get_object_or_404(
-                Subscription, subscriber=user, author=author
-            )
             if subscription.exists():
-                subscription.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(
-                {"errors": "Пользователь не подписан на данного автора"}
+                data = {
+                    "errors": (
+                        "Вы подписаны на этого автора, "
+                        "или пытаетесь подписаться на себя."
+                    )
+                }
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            Subscription.objects.create(subscriber=user, author=author)
+            serializer = SubscriptionSerializer(
+                author, context={"request": request}
             )
-        return None
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        elif request.method == "DELETE":
+            if not subscription.exists():
+                return Response(
+                    {"errors": "Вы не подписаны на данного автора."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
