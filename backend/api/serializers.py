@@ -180,21 +180,21 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "В рецепте должен быть как минимум 1 ингредиент."
             )
-        for ingredient in ingredients_to_validate:
-            if ingredient in validated_ingredients:
+        for ing in ingredients_to_validate:
+            if ing in validated_ingredients:
                 raise serializers.ValidationError("Такой ингредиент уже есть")
-            validated_ingredients.append(ingredient)
-            if int(ingredient.get("amount")) < 1:
+            validated_ingredients.append(ing)
+            if int(ing.get("amount")) < 1:
                 raise serializers.ValidationError(
                     "Неверно указано количество ингредиента"
                 )
         return validated_ingredients
 
     def create_ingredients(self, recipe, ingredients):
-        for i in ingredients:
-            ingredient = Ingredient.objects.get(id=i["id"])
+        for ing in ingredients:
+            ingredient = Ingredient.objects.get(id=ing["id"])
             RecipeIngredient.objects.create(
-                ingredient=ingredient, recipe=recipe, amount=i["amount"]
+                ingredient=ingredient, recipe=recipe, amount=ing["amount"]
             )
 
     def create(self, validated_data):
@@ -240,19 +240,15 @@ class SubscriptionSerializer(UserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "is_subscribed",
-            "recipes",
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + (
             "recipes_count",
+            "recipes",
         )
-        read_only_fields = "__all__"
+        read_only_fields = (
+            "email",
+            "username",
+        )
 
     def validate(self, data):
         """Проверяет правильность данных перед подпиской на автора."""
@@ -261,7 +257,7 @@ class SubscriptionSerializer(UserSerializer):
         )
         author = get_object_or_404(User, id=author_id)
         user = self.context.get("request").user
-        if author.followed_by.filter(id=user.id).exists():
+        if author.subscribers.filter(id=user.id).exists():
             raise serializers.ValidationError(
                 detail=f"Пользователь{user} уже подписан на автора {author}",
             )

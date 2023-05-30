@@ -65,7 +65,7 @@ class UserViewSet(UserViewSet):
                 author, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
-                Subscription.objects.create(user=user, author=author)
+                Subscription.objects.create(subscriber=user, author=author)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
@@ -75,7 +75,7 @@ class UserViewSet(UserViewSet):
 
         if request.method == "DELETE":
             subscription = get_object_or_404(
-                Subscription, user=user, author=author
+                Subscription, subscriber=user, author=author
             )
             if subscription.exists():
                 subscription.delete()
@@ -88,7 +88,7 @@ class UserViewSet(UserViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        queryset = User.objects.filter(user=user)
+        queryset = User.objects.filter(subscriptions__subscriber=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscriptionSerializer(
             pages, many=True, context={"request": request}
@@ -119,9 +119,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     pagination_class = ViewLevelPagination
-    # #permission_classes = [
-    #     IsOwnerOrReadOnly,
-    # ]
+    permission_classes = (IsOwnerOrReadOnly,)
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -203,8 +201,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         for num, ing in enumerate(ingredients):
             shopping_list += (
-                f"{num + 1}. {ing['ingredient__name']} - {ing['amount']}"
-                / f"{ing['ingredient__measurement_unit']}\n"
+                f"{num + 1}. {ing['ingredient__name']} - {ing['amount']} "
+                f"{ing['ingredient__measurement_unit']}\n"
             )
 
         filename = f"shopping-list_{request.user}.txt"

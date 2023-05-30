@@ -196,6 +196,8 @@ class Favorites(models.Model):
                 name="unique_user_favorite_recipes",
             )
         ]
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранное"
 
 
 class ShoppingList(models.Model):
@@ -226,3 +228,5 @@ class ShoppingList(models.Model):
                 name="unique_user_recipe_shopping_list",
             )
         ]
+        verbose_name = "Список покупок"
+        verbose_name_plural = "Список покупок"
