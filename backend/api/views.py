@@ -18,7 +18,7 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
 )
 
-# from .filters import IngredientFilter, RecipeFilter
+from .filters import IngredientFilter, RecipeFilter
 from rest_framework.response import Response
 from users.models import Subscription
 
@@ -34,7 +34,7 @@ from .serializers import (
     UserSerializer,
 )
 
-# from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 User = get_user_model()
@@ -118,12 +118,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """Представление рецептов."""
 
     queryset = Recipe.objects.all()
-    # pagination_class = ViewLevelPagination
+    pagination_class = ViewLevelPagination
     # #permission_classes = [
     #     IsOwnerOrReadOnly,
     # ]
-    # filter_backends = [DjangoFilterBackend, ]
-    # filterset_class = RecipeFilter
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method == "GET":

@@ -47,17 +47,6 @@ class UserCreateSerializer(UserCreateSerializer):
         )
 
 
-class IngredientSerializer(serializers.ModelSerializer):
-    """Сериализатор ингредиентов."""
-
-    class Meta:
-        model = Ingredient
-        fields = (
-            "name",
-            "measurement_unit",
-        )
-
-
 class TagSerializer(serializers.ModelSerializer):
     """Сериализатор тегов."""
 
@@ -66,12 +55,18 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class RecipeIngredientSerialzier(serializers.ModelField):
-#     ingredient = serializers.SerializerMethodField()
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор модели, связывающей ингредиенты и рецепт."""
 
-#     class Meta:
-#         model = RecipeIngredient
-#         fields = ("ingredient")
+    id = serializers.ReadOnlyField(source="ingredient.id")
+    name = serializers.ReadOnlyField(source="ingredient.name")
+    measurement_unit = serializers.ReadOnlyField(
+        source="ingredient.measurement_unit"
+    )
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ["id", "name", "amount", "measurement_unit"]
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
@@ -101,10 +96,12 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, recipe):
         """Возвращает список ингредиентов рецепта."""
+
         return recipe.ingredients.values(
             "id",
             "name",
             "measurement_unit",
+            amount=F("recipeingredient__amount"),
         )
 
     def get_is_favorited(self, recipe):
@@ -123,16 +120,29 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         return current_user.shopping_list.filter(recipe=recipe).exists()
 
 
-class RecipeIngredientSerializer(serializers.ModelSerializer):
+class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор вывода ингредиентов (без количества)."""
+
     class Meta:
-        model = RecipeIngredient
+        model = Ingredient
         fields = "__all__"
 
 
-class RecipeCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор создания рецепта."""
+class AddIngredientRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор добавления ингредиента в рецепт."""
 
-    ingredients = RecipeIngredientSerializer(
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ["id", "amount"]
+
+
+class RecipeCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор создания и обновления рецепта."""
+
+    ingredients = AddIngredientRecipeSerializer(
         many=True,
     )
     tags = serializers.PrimaryKeyRelatedField(
@@ -140,9 +150,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         error_messages={"does_not_exist": "Указанного тега нет в базе данных"},
     )
-    image = Base64ImageField(max_length=None)
+    image = Base64ImageField()
     author = UserSerializer(read_only=True)
-    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -169,30 +178,24 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         validated_ingredients = []
         if not ingredients_to_validate:
             raise serializers.ValidationError(
-                "В рецепте должен быть как минимум 1 ингредиент"
+                "В рецепте должен быть как минимум 1 ингредиент."
             )
         for ingredient in ingredients_to_validate:
-            if ingredient["id"] in validated_ingredients:
+            if ingredient in validated_ingredients:
                 raise serializers.ValidationError("Такой ингредиент уже есть")
-            validated_ingredients.append(ingredient["id"])
+            validated_ingredients.append(ingredient)
             if int(ingredient.get("amount")) < 1:
                 raise serializers.ValidationError(
                     "Неверно указано количество ингредиента"
                 )
         return validated_ingredients
 
-    @staticmethod
-    def create_ingredients(recipe, ingredients_to_add):
-        added_ingredients = []
-        for ingredient in ingredients_to_add:
-            added_ingredients.append(
-                RecipeIngredient(
-                    ingredient=ingredient.pop("id"),
-                    amount=ingredient.pop("amount"),
-                    recipe=recipe,
-                )
+    def create_ingredients(self, recipe, ingredients):
+        for i in ingredients:
+            ingredient = Ingredient.objects.get(id=i["id"])
+            RecipeIngredient.objects.create(
+                ingredient=ingredient, recipe=recipe, amount=i["amount"]
             )
-        RecipeIngredient.objects.bulk_create(added_ingredients)
 
     def create(self, validated_data):
         author = self.context.get("request").user

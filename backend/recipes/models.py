@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
+from django.db import models
 
 User = get_user_model()
 
@@ -85,6 +86,7 @@ class Recipe(models.Model):
     )
 
     text = models.TextField(
+        unique=True,
         verbose_name="Описание рецепта",
         help_text="Добавьте подробное описание рецепта",
     )
@@ -103,7 +105,8 @@ class Recipe(models.Model):
         verbose_name="Теги",
     )
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name="Время приготовления (в минутах)"
+        verbose_name="Время приготовления (в минутах)",
+        validators=[MinValueValidator(1)],
     )
 
     pub_date = models.DateTimeField(
@@ -130,9 +133,10 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name="Ингредиент",
     )
-    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
+    amount = models.IntegerField(
+        verbose_name="Количество", validators=[MinValueValidator(1)]
+    )
 
     class Meta:
         constraints = [
