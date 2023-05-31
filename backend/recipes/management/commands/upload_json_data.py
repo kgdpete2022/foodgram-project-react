@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.upload_all_files(DATA_DIR_PATH)
-        return
+        return None
 
     def read_file(self, filename):
         with open(filename, encoding="utf-8") as f:
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     self.upload_tags(data)
                 elif filename == "users.json":
                     self.upload_users(data)
-        return
+        return None
 
     def upload_tags(self, tags):
         print("--------------------------------------------------------------")
@@ -62,7 +62,7 @@ class Command(BaseCommand):
             f"(как дубликаты или не соответствующие формату): "
             f"{discarded}"
         )
-        return
+        return None
 
     def upload_ingredients(self, ingredients):
         print("--------------------------------------------------------------")
@@ -89,7 +89,7 @@ class Command(BaseCommand):
             f"(как дубликаты или не соответствующие формату): "
             f"{discarded}"
         )
-        return
+        return None
 
     def upload_users(self, users):
         print("--------------------------------------------------------------")
@@ -124,4 +124,4 @@ class Command(BaseCommand):
             f"(как дубликаты или не соответствующие формату): "
             f"{discarded}"
         )
-        return
+        return None
