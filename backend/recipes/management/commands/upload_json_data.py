@@ -55,13 +55,13 @@ class Command(BaseCommand):
                     f"или не соответствует формату ({e})"
                 )
                 discarded += 1
-        print(
+        print(  # type: ignore[return]
             f"Добавление тегов завершено.\n"
             f"- тегов добавлено: {uploaded}\n"
             f"- тегов отклонено "
             f"(как дубликаты или не соответствующие формату): "
             f"{discarded}"
-        )
+        )  # type: ignore[return]
         return None
 
     def upload_ingredients(self, ingredients):
