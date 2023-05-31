@@ -134,3 +134,4 @@ dmypy.json
 
 # miscellaneous items
 misc/
+pyproject.toml
