@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.upload_all_files(DATA_DIR_PATH)
-        return None
+        return
 
     def read_file(self, filename):
         with open(filename, encoding="utf-8") as f:
