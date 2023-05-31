@@ -11,9 +11,7 @@ from recipes.models import Ingredient, Tag
 User = get_user_model()
 
 
-DATA_DIR_PATH = (
-    f"{Path(__file__).resolve().parent.parent.parent.parent.parent}/data/"
-)
+DATA_DIR_PATH = f"{Path(__file__).resolve().parent.parent.parent.parent}/data/"
 
 
 class Command(BaseCommand):
