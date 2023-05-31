@@ -17,13 +17,12 @@ class Command(BaseCommand):
     ALLOWED_FILE_NAMES = {}
 
     def handle(self, *args, **options):
-        filenames = self.upload_all_files(DATA_DIR_PATH)
-        return
+        self.upload_all_files(DATA_DIR_PATH)
+        return None
 
     def read_file(self, filename):
         with open(filename, encoding="utf-8") as f:
-            data = json.load(f)
-        return data
+            return json.load(f)
 
     def upload_all_files(self, full_path):
         for dirpath, dirnames, filenames in os.walk(full_path):
@@ -38,9 +37,7 @@ class Command(BaseCommand):
         return
 
     def upload_tags(self, tags):
-        print(
-            f"--------------------------------------------------------------"
-        )
+        print("--------------------------------------------------------------")
         print("Загружаем теги в базу данных...")
         uploaded = 0
         discarded = 0
@@ -54,7 +51,8 @@ class Command(BaseCommand):
                 uploaded += 1
             except Exception as e:
                 print(
-                    f"Teг {tag} уже есть в базе данных или не соответствует формату ({e})"
+                    f"Teг {tag} уже есть в базе данных "
+                    f"или не соответствует формату ({e})"
                 )
                 discarded += 1
         print(
@@ -80,7 +78,8 @@ class Command(BaseCommand):
                 uploaded += 1
             except Exception as e:
                 print(
-                    f"Игредиент {ingredient} уже есть в базе данных или не соответствует формату ({e})"
+                    f"Игредиент {ingredient} уже есть в базе данных "
+                    f"или не соответствует формату ({e})"
                 )
                 discarded += 1
         print(
@@ -114,7 +113,8 @@ class Command(BaseCommand):
                 uploaded += 1
             except Exception as e:
                 print(
-                    f"Пользователь {user} уже есть в базе данных или не соответствует формату ({e})"
+                    f"Пользователь {user} уже есть в базе данных "
+                    f"или не соответствует формату ({e})"
                 )
                 discarded += 1
         print(

@@ -12,12 +12,23 @@ from rest_framework.response import Response
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import ViewLevelPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
-from .serializers import (BriefRecipeSerializer, IngredientSerializer,
-                          RecipeCreateSerializer, RecipeGetSerializer,
-                          SubscriptionSerializer, TagSerializer,
-                          UserSerializer)
-from recipes.models import (Favorites, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingList, Tag)
+from .serializers import (
+    BriefRecipeSerializer,
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeGetSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+    UserSerializer,
+)
+from recipes.models import (
+    Favorites,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag,
+)
 from users.models import Subscription
 
 User = get_user_model()
@@ -55,7 +66,7 @@ class UserViewSet(UserViewSet):
                 author, context={"request": request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == "DELETE":
+        if request.method == "DELETE":
             if not subscription.exists():
                 return Response(
                     {"errors": "Вы не подписаны на данного автора."},

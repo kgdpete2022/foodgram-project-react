@@ -6,7 +6,7 @@ def validate_username(value):
         raise ValidationError(
             "Имя пользователя 'me' зарезервировано системой."
         )
-    elif len(value) < 2:
+    if len(value) < 2:
         raise ValidationError(
             "Имя пользователя не может быть короче 2 символов."
         )
