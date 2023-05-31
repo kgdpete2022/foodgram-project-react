@@ -27,11 +27,11 @@ class UserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, other_user):
-        current_user = self.context["request"].user
-        if current_user.is_anonymous or other_user == current_user:
+        user = self.context["request"].user
+        if user.is_anonymous or other_user == user:
             return False
         return Subscription.objects.filter(
-            subscriber=current_user, author=other_user
+            subscriber=user, author=other_user
         ).exists()
 
 
@@ -108,18 +108,18 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe):
         """Проверяет, добавлен ли рецепт в избранное текущего пользователя."""
-        current_user = self.context["request"].user
-        if current_user.is_anonymous:
+        user = self.context["request"].user
+        if user.is_anonymous:
             return False
-        return current_user.favorite_recipes.filter(recipe=recipe).exists()
+        return user.favorite_recipes.filter(recipe=recipe).exists()
 
     def get_is_in_shopping_cart(self, recipe):
         """Проверяет, добавлен ли рецепт /
         в список покупок текущего пользователя."""
-        current_user = self.context["request"].user
-        if current_user.is_anonymous:
+        user = self.context["request"].user
+        if user.is_anonymous:
             return False
-        return current_user.shopping_list.filter(recipe=recipe).exists()
+        return user.shopping_list.filter(recipe=recipe).exists()
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -256,29 +256,29 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             "recipes_count",
         )
 
-    # def validate(self, data):
-    #     """Проверяет правильность данных перед подпиской на автора."""
-    #     author_id = (
-    #         self.context.get("request").parser_context.get("kwargs").get("id")
-    #     )
-    #     author = get_object_or_404(User, id=author_id)
-    #     user = self.context["request"].user
-    #     if author.subscribers.filter(id=user.id).exists():
-    #         raise serializers.ValidationError(
-    #             detail=f"Пользователь{user} уже подписан на автора {author}",
-    #         )
-    #     if user == author:
-    #         raise serializers.ValidationError(
-    #             detail="Пользователь не может подписаться на самого себя",
-    #         )
-    #     return data
+    def validate(self, data):
+        """Проверяет правильность данных перед подпиской на автора."""
+        author_id = (
+            self.context.get("request").parser_context.get("kwargs").get("id")
+        )
+        author = get_object_or_404(User, id=author_id)
+        user = self.context["request"].user
+        if author.subscribers.filter(id=user.id).exists():
+            raise serializers.ValidationError(
+                detail=f"Пользователь{user} уже подписан на автора {author}",
+            )
+        if user == author:
+            raise serializers.ValidationError(
+                detail="Пользователь не может подписаться на самого себя",
+            )
+        return data
 
     def get_is_subscribed(self, other_user):
-        current_user = self.context["request"].user
-        if current_user.is_anonymous or other_user == current_user:
+        user = self.context["request"].user
+        if user.is_anonymous or other_user == user:
             return False
         return Subscription.objects.filter(
-            subscriber=current_user, author=other_user
+            subscriber=user, author=other_user
         ).exists()
 
     def get_recipes(self, author):

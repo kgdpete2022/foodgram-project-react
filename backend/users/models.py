@@ -5,6 +5,8 @@ from .validators import validate_username
 
 
 class User(AbstractUser):
+    """Модель пользователя."""
+
     username = models.CharField(
         max_length=30,
         unique=True,
@@ -49,6 +51,8 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
+    """Модель подписок пользователя."""
+
     author = models.ForeignKey(
         User,
         related_name="subscriptions",

@@ -5,6 +5,8 @@ from recipes.models import Ingredient, Recipe, Tag
 
 
 class IngredientFilter(SearchFilter):
+    """Фильтр ингредиентов."""
+
     search_param = "name"
 
     class Meta:
@@ -13,6 +15,8 @@ class IngredientFilter(SearchFilter):
 
 
 class RecipeFilter(rest_framework.FilterSet):
+    """Фильтр рецептов."""
+
     author = rest_framework.CharFilter()
     tags = rest_framework.ModelMultipleChoiceFilter(
         field_name="tags__slug",
