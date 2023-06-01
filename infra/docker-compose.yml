@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: postgres:13.0-alpine:latest
+    image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
@@ -10,7 +10,7 @@ services:
 
   frontend:
     container_name: foodgram_frontend
-    image: kgdpete/foodgram_frontend:latest
+    image: kgdpete/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
@@ -18,7 +18,7 @@ services:
 
   backend:
     container_name: foodgram_backend
-    image: kgdpete/foodgram_backend:latest
+    image: kgdpete/foodgram_backend
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
@@ -30,7 +30,7 @@ services:
 
   nginx:
     container_name: foodgram_nginx
-    image: nginx:1.21.3-alpine:latest
+    image: nginx:1.21.3-alpine
     ports:
       - "80:80"
     volumes:
