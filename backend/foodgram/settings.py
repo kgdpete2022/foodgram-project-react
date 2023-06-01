@@ -68,18 +68,18 @@ DATABASES = {
 }
 
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": os.getenv(
-#             "DB_ENGINE", default="django.db.backends.postgresql"
-#         ),
-#         "NAME": os.getenv("DB_NAME", default="postgres"),
-#         "USER": os.getenv("POSTGRES_USER", default="postgres"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("DB_HOST", default="db"),
-#         "PORT": os.getenv("DB_PORT", default="5432"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": os.getenv(
+            "DB_ENGINE", default="django.db.backends.postgresql"
+        ),
+        "NAME": os.getenv("DB_NAME", default="postgres"),
+        "USER": os.getenv("POSTGRES_USER", default="postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("DB_HOST", default="db"),
+        "PORT": os.getenv("DB_PORT", default="5432"),
+    }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -139,12 +139,6 @@ REST_FRAMEWORK = {
         "django_filters.rest_framework.DjangoFilterBackend"
     ],
 }
-
-
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-#     "AUTH_HEADER_TYPES": ("Bearer",),
-# }
 
 
 DJOSER = {

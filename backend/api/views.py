@@ -24,6 +24,8 @@ User = get_user_model()
 
 
 class UserViewSet(UserViewSet):
+    """Представление пользователя."""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = ViewLevelPagination
