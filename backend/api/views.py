@@ -12,12 +12,23 @@ from rest_framework.response import Response
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import ViewLevelPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
-from .serializers import (BriefRecipeSerializer, IngredientSerializer,
-                          RecipeCreateSerializer, RecipeGetSerializer,
-                          SubscriptionSerializer, TagSerializer,
-                          UserSerializer)
-from recipes.models import (Favorites, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingList, Tag)
+from .serializers import (
+    BriefRecipeSerializer,
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeGetSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+    UserSerializer,
+)
+from recipes.models import (
+    Favorites,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag,
+)
 from users.models import Subscription
 
 User = get_user_model()
@@ -111,7 +122,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def add_to(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
             return Response(
-                {"errors": f"Рецепт уже добавлен в этот список."},
+                {"errors": "Рецепт уже есть в этом списке."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         recipe = get_object_or_404(Recipe, id=pk)
@@ -125,7 +136,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
-            {"errors": "Рецепт уже удален"}, status=status.HTTP_400_BAD_REQUEST
+            {"errors": "Рецепта нет в этом списке."},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     def apply_action(self, model, request, pk):
