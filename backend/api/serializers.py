@@ -31,7 +31,9 @@ class UserSerializer(UserSerializer):
         user = self.context["request"].user
         if user.is_anonymous or other_user == user:
             return False
-        return Subscription.objects.filter(subscriber=user, author=other_user).exists()
+        return Subscription.objects.filter(
+            subscriber=user, author=other_user
+        ).exists()
 
 
 class UserCreateSerializer(UserCreateSerializer):
@@ -61,7 +63,9 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
-    measurement_unit = serializers.ReadOnlyField(source="ingredient.measurement_unit")
+    measurement_unit = serializers.ReadOnlyField(
+        source="ingredient.measurement_unit"
+    )
 
     class Meta:
         model = RecipeIngredient
@@ -168,7 +172,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def validate_tags(self, tags):
         for tag in tags:
             if not Tag.objects.filter(id=tag.id).exists():
-                raise serializers.ValidationError("Указанного тега нет в базе данных")
+                raise serializers.ValidationError(
+                    "Указанного тега нет в базе данных"
+                )
         return tags
 
     def validate_ingredients(self, ingredients_to_validate):
@@ -258,7 +264,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Проверяет правильность данных перед подпиской на автора."""
-        author_id = self.context.get("request").parser_context.get("kwargs").get("id")
+        author_id = (
+            self.context.get("request").parser_context.get("kwargs").get("id")
+        )
         author = get_object_or_404(User, id=author_id)
         user = self.context["request"].user
         if author.subscribers.filter(id=user.id).exists():
@@ -275,7 +283,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         if user.is_anonymous or other_user == user:
             return False
-        return Subscription.objects.filter(subscriber=user, author=other_user).exists()
+        return Subscription.objects.filter(
+            subscriber=user, author=other_user
+        ).exists()
 
     def get_recipes(self, author):
         """Возвращает рецепты автора в подписках пользователя."""
