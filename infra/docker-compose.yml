@@ -40,7 +40,6 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
-    restart: always
 
 volumes:
   postgres_data:
