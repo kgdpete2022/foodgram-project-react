@@ -12,18 +12,28 @@ from rest_framework.response import Response
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import ViewLevelPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
-from .serializers import (BriefRecipeSerializer, IngredientSerializer,
-                          RecipeCreateSerializer, RecipeGetSerializer,
-                          SubscriptionSerializer, TagSerializer,
-                          UserSerializer)
-from recipes.models import (Favorites, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingList, Tag)
+from .serializers import (
+    BriefRecipeSerializer,
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeGetSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+    UserSerializer,
+)
+from recipes.models import (
+    Favorites,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag,
+)
 from users.models import Subscription
 
 User = get_user_model()
 
 
-# Create your views here.
 class UserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -36,9 +46,7 @@ class UserViewSet(UserViewSet):
     def subscribe(self, request, id):
         user = self.request.user
         author = get_object_or_404(User, id=id)
-        subscription = Subscription.objects.filter(
-            subscriber=user, author=author
-        )
+        subscription = Subscription.objects.filter(subscriber=user, author=author)
 
         if user == author:
             return Response(
@@ -51,9 +59,7 @@ class UserViewSet(UserViewSet):
                 data = {"errors": ("Вы уже подписаны на этого автора.")}
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
             Subscription.objects.create(subscriber=user, author=author)
-            serializer = SubscriptionSerializer(
-                author, context={"request": request}
-            )
+            serializer = SubscriptionSerializer(author, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == "DELETE":
             if not subscription.exists():
@@ -114,9 +120,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def shopping_cart(self, request, pk):
-        if ShoppingList.objects.filter(
-            user=request.user, recipe__id=pk
-        ).exists():
+        if ShoppingList.objects.filter(user=request.user, recipe__id=pk).exists():
             return Response(
                 {"errors": "Рецепт уже есть списке покупок."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -162,16 +166,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        detail=False, methods=["get"], permission_classes=[IsAuthenticated]
-    )
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         user = request.user
         shopping_list = f"Список покупок пользователя {user}:\n"
         ingredients = (
-            RecipeIngredient.objects.filter(
-                recipe__added_to_shopping_list__user=user
-            )
+            RecipeIngredient.objects.filter(recipe__added_to_shopping_list__user=user)
             .values("ingredient__name", "ingredient__measurement_unit")
             .annotate(amount=Sum("amount"))
         )
@@ -182,8 +182,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
         filename = f"shopping-list_{request.user}.txt"
-        response = HttpResponse(
-            shopping_list, content_type="text/plain; charset=utf-8"
-        )
+        response = HttpResponse(shopping_list, content_type="text/plain; charset=utf-8")
         response["Content-Disposition"] = f"attachment; filename='{filename}'"
         return response

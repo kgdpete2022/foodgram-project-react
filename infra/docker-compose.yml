@@ -6,7 +6,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    restart: always
 
   frontend:
     container_name: foodgram_frontend
