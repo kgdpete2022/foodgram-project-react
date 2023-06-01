@@ -130,7 +130,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def apply_action(self, model, request, pk):
         if request.method == "POST":
-            return self.add_to(model, request.user, pk
+            return self.add_to(model, request.user, pk)
         return self.delete_from(model, request.user, pk)
 
     @action(
