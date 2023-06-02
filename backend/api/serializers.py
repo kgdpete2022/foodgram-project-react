@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
@@ -142,6 +143,7 @@ class AddIngredientRecipeSerializer(serializers.ModelSerializer):
         fields = ["id", "amount"]
 
 
+@transaction.atomic
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания и обновления рецепта."""
 
