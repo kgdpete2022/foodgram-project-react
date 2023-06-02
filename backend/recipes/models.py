@@ -86,7 +86,6 @@ class Recipe(models.Model):
     )
 
     text = models.TextField(
-        unique=True,
         verbose_name="Описание рецепта",
         help_text="Добавьте подробное описание рецепта",
     )
