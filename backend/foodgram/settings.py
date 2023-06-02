@@ -9,10 +9,9 @@ load_dotenv(os.path.join(BASE_DIR.parent, "infra/.env"))
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["51.250.20.57", "127.0.0.1", "localhost", "backend"]
-
 
 INSTALLED_APPS = [
     "django.contrib.admin",
